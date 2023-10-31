@@ -1,0 +1,94 @@
+import tkinter as tk
+import math
+
+# Function to update the number entry fields
+def add_digit(digit):
+    current_num = entry_num1 if num1_entry_selected.get() else entry_num2
+    current_num.insert(tk.END, digit)
+
+# Function to clear the number entry fields
+def clear_entry():
+    current_num = entry_num1 if num1_entry_selected.get() else entry_num2
+    current_num.delete(0, tk.END)
+
+# Create a function to perform the calculation
+def calculate():
+    num1 = float(entry_num1.get())
+    num2 = float(entry_num2.get())
+    operation = operator_var.get()
+    
+    if operation == "Addition":
+        result = num1 + num2
+    elif operation == "Subtraction":
+        result = num1 - num2
+    elif operation == "Multiplication":
+        result = num1 * num2
+    elif operation == "Division":
+        if num2 == 0:
+            result = "Division by zero error"
+        else:
+            result = num1 / num2
+    elif operation == "Square Root":
+        result = math.sqrt(num1)
+    else:
+        result = "Invalid operation"
+    
+    result_label.config(text="Result: " + str(result))
+
+# Create the main window
+root = tk.Tk()
+root.title("Simple Calculator")
+
+# Create entry fields for the numbers in phone dial pad style
+entry_num1 = tk.Entry(root, font=("Helvetica", 14), justify='right')
+entry_num1.grid(row=0, column=0, columnspan=4, padx=10, pady=10, ipady=10)
+
+entry_num2 = tk.Entry(root, font=("Helvetica", 14), justify='right')
+entry_num2.grid(row=1, column=0, columnspan=4, padx=10, pady=10, ipady=10)
+
+# Create buttons for digits 1 to 9
+button_digits = [str(i) for i in range(1, 10)]
+row_index = 2
+column_index = 0
+for digit in button_digits:
+    tk.Button(root, text=digit, command=lambda d=digit: add_digit(d), font=("Helvetica", 14)).grid(row=row_index, column=column_index, padx=5, pady=5)
+    column_index += 1
+    if column_index >= 3:
+        column_index = 0
+        row_index += 1
+
+# Create a radio button group for the arithmetic operations
+operator_var = tk.StringVar()
+operator_var.set("Addition")
+
+operations = ["Addition", "Subtraction", "Multiplication", "Division", "Square Root"]
+
+row_index += 1
+column_index = 0
+for operation in operations:
+    tk.Radiobutton(root, text=operation, variable=operator_var, value=operation, font=("Helvetica", 12)).grid(row=row_index, column=column_index, columnspan=2, padx=5, pady=5, sticky='w')
+    column_index += 2
+    if column_index >= 4:
+        column_index = 0
+        row_index += 1
+
+# Create a button to perform the calculation
+calculatae_button = tk.Button(root, text="Calculate", command=calculate, font=("Helvetica", 14))
+calculate_button.grid(row=row_index, column=0, columnspan=4, padx=10, pady=10)
+
+# Create a label to display the result
+result_label = tk.Label(root, text="Result: ", font=("Helvetica", 16))
+result_label.grid(row=row_index + 1, column=0, columnspan=4, padx=10, pady=10)
+
+# Create a button to switch between number entry fields
+num1_entry_selected = tk.BooleanVar()
+num1_entry_selected.set(True)
+switch_button = tk.Button(root, text="Switch Entry", command=lambda: num1_entry_selected.set(not num1_entry_selected.get()), font=("Helvetica", 12))
+switch_button.grid(row=row_index + 2, column=0, columnspan=4, padx=10, pady=10)
+
+# Create a button to clear the currently selected number entry field
+clear_button = tk.Button(root, text="Clear Entry", command=clear_entry, font=("Helvetica", 12))
+clear_button.grid(row=row_index + 3, column=0, columnspan=4, padx=10, pady=10)
+
+# Start the Tkinter main loop
+root.mainloop()
